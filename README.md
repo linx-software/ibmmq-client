@@ -1,10 +1,10 @@
 # Background #
-This is a console app to read and write text messages to IBM MQ.
+This is a console app to read and write text content to IBM MQ.
 
 We require IBM MQ connectivity at a customer. At the time of writing, Linx 6 does not have an IBMMQ plugin. This project provides a way to use Linx 6 to access IBM MQ by using the CommandLine function.
 
 # Specification #
-The app uploads and downloads text messages to and from an IBM MQ queue.
+The app uploads and downloads text content to and from an IBM MQ queue.
 
 app.exe upload|download -host [host] -port [port] -channel [channel] -queuemanager [queuemanager] -userid [userid] -password [password] -queuename [queuename] -inputdir [inputdirectory] -archivedir [archivedirectory] -outputdir [outputdirectory] -logdir [logdirectory]
 
