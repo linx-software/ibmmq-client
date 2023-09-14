@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "IBMMQClient": {
+      "commandName": "Project",
+      "commandLineArgs": "download -host 127.0.0.1 -port 1414 -channel DEV.APP.SVRCONN -queuemanager QM1 -userid app -password passw0rd -queuename DEV.QUEUE.1 -outputdir C:\\Users\\Gawie\\temp\\mq\\output -logdir C:\\Users\\Gawie\\temp\\mq\\log"
+    }
+  }
+}
