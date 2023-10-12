@@ -1,26 +1,20 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using IBM.WMQ;
 using IBMMQClient;
-using System.Diagnostics;
+using System.Collections;
 
-string? GetArg(string name)
+if(args.Length == 0)
 {
-    int index = Array.FindIndex(args, x => x.ToLower() == name.ToLower()) ;
-    if (index >= 0) 
-    {
-        return args[index + 1];
-    } 
-    else
-    {
-        return null;
-    }
+    throw new Exception(String.Join("\r\n", Args.GetHelp()));
 }
-string GetRequiredArg(string name)
+
+var arguments = new Args(args);
+if(arguments.IsNotComplete(out var errors))
 {
-    var value = GetArg(name);
-    return value ?? throw new Exception($"Argument {name} is required.");
+    throw new Exception(String.Join("\r\n", errors));
 }
-string logFilepath;
+
+string logFilepath = Path.Combine(arguments.LogDir!, DateTime.UtcNow.ToString("yyyyMMdd") + ".log");
 void Log(string message)
 {
     Console.WriteLine(message);
@@ -28,58 +22,56 @@ void Log(string message)
     File.AppendAllText(logFilepath, contents);
 }
 
-Trace.Assert(args.Length > 0, "No arguments found");
-string command = args[0];
-if (command != "upload" && command != "download")
-    throw new Exception("Expected 'upload' or 'download' as the first arg but found " + command);
-var userId = GetRequiredArg("-userId");
-var password = GetRequiredArg("-password");
-var host = GetRequiredArg("-host");
-var port = GetRequiredArg("-port");
-var channel = GetRequiredArg("-channel");
-var queueManager = GetRequiredArg("-queueManager");
-var queueName = GetRequiredArg("-queueName");
-var logDir = GetRequiredArg("-logdir");
-logFilepath = Path.Combine(logDir, DateTime.UtcNow.ToString("yyyyMMdd") + ".log");
-
 try
 {
-    Log($"command={command}");
-    Log($"host={host}");
-    Log($"port={port}");
-    Log($"channel={channel}");
-    Log($"queueManager={queueManager}");
-    Log($"queueName={queueName}");
-    Log($"logDir={logDir}");
+    Log($"command={arguments.Command}");
+    Log($"host={arguments.Host}");
+    Log($"port={arguments.Port}");
+    Log($"channel={arguments.Channel}");
+    Log($"queueManager={arguments.QueueManager}");
+    Log($"queueName={arguments.QueueName}");
+    Log($"logDir={arguments.LogDir}");
 
-    if (command == "upload")
+   Hashtable connectionProperties = new()
     {
-        var inputDir = GetRequiredArg("-inputdir");
-        var archiveDir = GetRequiredArg("-archivedir");
-        Log($"inputDir={inputDir}");
-        Log($"archiveDir={archiveDir}");
-        using var q = new QueueWriter(userId, password, host, port, channel, queueManager, queueName);
-        foreach (var filepath in Directory.GetFiles(inputDir))
+        { MQC.TRANSPORT_PROPERTY, MQC.TRANSPORT_MQSERIES_MANAGED },
+        { MQC.HOST_NAME_PROPERTY, arguments.Host },
+        { MQC.PORT_PROPERTY, arguments.Port },
+        { MQC.CHANNEL_PROPERTY, arguments.Channel }
+    };
+    if (arguments.UserId != null) { connectionProperties.Add(MQC.USER_ID_PROPERTY, arguments.UserId); };
+    if (arguments.Password != null) { connectionProperties.Add(MQC.PASSWORD_PROPERTY, arguments.Password); };
+    if (arguments.CertStore != null) { connectionProperties.Add(MQC.SSL_CERT_STORE_PROPERTY, arguments.CertStore); };
+    if (arguments.CipherSpec != null) { connectionProperties.Add(MQC.SSL_CIPHER_SPEC_PROPERTY, arguments.CipherSpec); };
+    
+    MQQueueManager queueManager = new(arguments.QueueManager, connectionProperties);
+
+    if (arguments.Command == "upload")
+    {
+        Log($"inputDir={arguments.InputDir}");
+        Log($"archiveDir={arguments.ArchiveDir}");
+        using var q = new QueueWriter(queueManager, arguments.QueueName!);
+        foreach (var filepath in Directory.GetFiles(arguments.InputDir!))
         {
             Log($"put {filepath} on queue");
             var messageId = q.Put(File.ReadAllText(filepath));
-            var archiveFilepath = Path.Combine(archiveDir, $"{messageId}_" + Path.GetFileName(filepath));
+            var archiveFilepath = Path.Combine(arguments.ArchiveDir!, $"{messageId}_" + Path.GetFileName(filepath));
             Log($"move {filepath} to {archiveFilepath}");
             File.Move(filepath, archiveFilepath);
         }
     }
     else
     {
-        var outputDir = GetRequiredArg("-outputdir");
-        Log($"outputDir={outputDir}");
-        using var q = new QueueReader(userId, password, host, port, channel, queueManager, queueName);
-        q.Get((messageId, contents) =>
+        Log($"outputDir={arguments.OutputDir!}");
+        QueueReader.Get(queueManager, arguments.QueueName!, (messageId, contents) =>
         {
-            var messagePath = Path.Combine(outputDir, $"{messageId}.txt");
+            var messagePath = Path.Combine(arguments.OutputDir!, $"{messageId}.txt");
             Log($"write messageId {messageId} to {messagePath}");
             File.WriteAllText(messagePath, contents);
         });
     }
+
+    queueManager.Disconnect();
 }
 catch (MQException ex)
 {

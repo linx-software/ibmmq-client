@@ -1,30 +1,14 @@
 ﻿using IBM.WMQ;
-using System.Collections;
 
 namespace IBMMQClient
 {
-    internal class QueueReader: IDisposable
+    internal class QueueReader
     {
-        private readonly MQQueueManager qManager;
-        private readonly MQQueue queue;
-        public QueueReader(string userId, string password, string host, string port, string channel,
-            string queueManager, string queueName)
+        public static void Get(MQQueueManager queueManager, string queueName, Action<string, string> contentHandler)
         {
-            Hashtable connectionProperties = new()
-            {
-                { MQC.TRANSPORT_PROPERTY, MQC.TRANSPORT_MQSERIES_MANAGED },
-                { MQC.HOST_NAME_PROPERTY, host },
-                { MQC.PORT_PROPERTY, port },
-                { MQC.CHANNEL_PROPERTY, channel },
-                { MQC.USER_ID_PROPERTY, userId },
-                { MQC.PASSWORD_PROPERTY, password }
-            };
-            this.qManager = new(queueManager, connectionProperties);
             int openOptions = MQC.MQOO_INPUT_AS_Q_DEF | MQC.MQOO_BROWSE;
-            this.queue = qManager.AccessQueue(queueName, openOptions);
-        }
-        public void Get(Action<string, string> contentHandler)
-        {
+            var queue = queueManager.AccessQueue(queueName, openOptions);
+
             MQGetMessageOptions browseOptions = new()
             {
                 Options = MQC.MQGMO_BROWSE_NEXT | MQC.MQGMO_NO_WAIT | MQC.MQGMO_FAIL_IF_QUIESCING
@@ -50,11 +34,7 @@ namespace IBMMQClient
                         break;
                 }
             }
-        }
-        public void Dispose()
-        {
             queue.Close();
-            qManager.Disconnect();
         }
     }
 }

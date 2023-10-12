@@ -6,14 +6,28 @@ We require IBM MQ connectivity at a customer. At the time of writing, Linx 6 doe
 # Specification #
 The app uploads and downloads text content to and from an IBM MQ queue.
 
-app.exe upload|download -host [host] -port [port] -channel [channel] -queuemanager [queuemanager] -userid [userid] -password [password] -queuename [queuename] -inputdir [inputdirectory] -archivedir [archivedirectory] -outputdir [outputdirectory] -logdir [logdirectory]
+Usage: IBMMQClient upload|download -h host -p port -c channel -m queueManager -n queueName -i inputDir -o outputDir -a archiveDir -l logDir -u userId -w password -r cipherSpec -s certStore
+- upload|download: Required first argument. Any one of the two.
+- -h host: Like -h 127.0.0.1. Default is localhost.
+- -p port: Like -p 1234. Default is 1414.
+- -c channel: Like -c DEV.APP.SVRCONN
+- -m queueManager: Like -m QM1
+- -n queueName: Like -n DEV.QUEUE.1
+- -i inputDir: Like -i c:\temp\mq\input. Directory where messages are read from.
+- -o outputDir: Like -o c:\temp\mq\output. Directory where messages are written to.
+- -a archiveDir: Like -a c:\temp\mq\archive. Directory where messages are archived.
+- -l logDir: Like -l c:\temp\mq\log. Directory where log files are written to.
+- -u userID: Like -u appuser
+- -w password: Like -w verylongpassword
+- -r cipherSpec: Like -r TLS_RSA_WITH_AES_256_CBC_SHA256
+- -s certStore: Like -s *USER. Where to find the cert in the Windows certificate store. Can be *SYSTEM or *USER
 
 ## Upload ##
 Upload reads files from the input directory, puts a message containing the contents of the file on the queue, and moves the file to the archive directory prepending [messageid]_ to the filename.
 
-example:
+examples:
 ````
-app.exe upload -host 127.0.0.1 -port 1414 -channel DEV.APP.SVRCONN -queuemanager QM1 -userid app -password passw0rd -queuename DEV.QUEUE.1 -inputdir c:\temp\mq\input -archivedir c:\temp\mq\archive -logdir c:\temp\mq\log
+IBMMQClient.exe upload -h 127.0.0.1 -p 1414 -c DEV.APP.SVRCONN -m QM1 -n DEV.QUEUE.1 -i c:\temp\mq\input -a c:\temp\mq\archive -l c:\temp\mq\log -u app -w passw0rd
 ````
 
 ## Download ##
@@ -21,7 +35,7 @@ Download reads each message from the queue, writes the contents to a file named 
 
 example:
 ````
-app.exe download -host 127.0.0.1 -port 1414 -channel DEV.APP.SVRCONN -queuemanager QM1 -userid app -password passw0rd -queuename DEV.QUEUE.1 -outputdir c:\temp\mq\output -logdir c:\temp\mq\log
+IBMMQClient.exe download -h 127.0.0.1 -p 1414 -c DEV.APP.SVRCONN -m QM1 -n DEV.QUEUE.1 -o c:\temp\mq\output -l c:\temp\mq\log -u app -w passw0rd
 ````
 
 ## Log ##
