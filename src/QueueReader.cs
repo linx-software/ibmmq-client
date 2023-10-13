@@ -4,7 +4,7 @@ namespace IBMMQClient
 {
     internal class QueueReader
     {
-        public static void Get(MQQueueManager queueManager, string queueName, Action<string, string> contentHandler)
+        public static void Get(MQQueueManager queueManager, string queueName, Action<string, byte[]> contentHandler)
         {
             int openOptions = MQC.MQOO_INPUT_AS_Q_DEF | MQC.MQOO_BROWSE;
             var queue = queueManager.AccessQueue(queueName, openOptions);
@@ -23,7 +23,7 @@ namespace IBMMQClient
                 try
                 {
                     queue.Get(message, browseOptions);
-                    contentHandler(Convert.ToBase64String(message.MessageId), message.ReadUTF());
+                    contentHandler(Convert.ToBase64String(message.MessageId), message.ReadBytes(message.DataLength));
                     queue.Get(message, removeOptions);
                 }
                 catch (MQException ex)

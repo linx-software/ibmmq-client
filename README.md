@@ -44,6 +44,7 @@ Logs are written to a file called [date].log in the log directory.
 # Notes #
 Documentation to get started
 https://www.ibm.com/docs/en/ibm-mq/9.3?topic=applications-developing-net
+https://www.ibm.com/docs/en/ibm-mq/9.3?topic=reference-mq-net-classes-interfaces
 
 Use TRANSPORT_MQSERIES_MANAGED mode. For other modes the MQSeries client install is required.
 
