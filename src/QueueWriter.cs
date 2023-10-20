@@ -10,10 +10,10 @@ namespace IBMMQClient
             int openOptions = MQC.MQOO_OUTPUT;
             this.queue = queueManager.AccessQueue(queueName, openOptions);
         }
-        public string Put(byte[] content)
+        public string Put(string content)
         {
             MQMessage message = new();
-            message.Write(content);
+            message.WriteString(content);
             queue.Put(message);
             return Convert.ToBase64String(message.MessageId);
         }

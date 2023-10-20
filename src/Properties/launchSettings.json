@@ -7,6 +7,10 @@
     "download": {
       "commandName": "Project",
       "commandLineArgs": "download -h 127.0.0.1 -p 1414 -c DEV.APP.SVRCONN -m QM1 -n DEV.QUEUE.1 -o C:\\Users\\Gawie\\temp\\mq\\output -l C:\\Users\\Gawie\\temp\\mq\\log -u app -w passw0rd"
+    },
+    "browse": {
+      "commandName": "Project",
+      "commandLineArgs": "browse -h 127.0.0.1 -p 1414 -c DEV.APP.SVRCONN -m QM1 -n DEV.QUEUE.1 -o C:\\Users\\Gawie\\temp\\mq\\output -l C:\\Users\\Gawie\\temp\\mq\\log -u app -w passw0rd"
     }
   }
 }

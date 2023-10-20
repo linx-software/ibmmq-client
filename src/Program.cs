@@ -54,7 +54,7 @@ try
         foreach (var filepath in Directory.GetFiles(arguments.InputDir!))
         {
             Log($"put {filepath} on queue");
-            var messageId = q.Put(File.ReadAllBytes(filepath));
+            var messageId = q.Put(File.ReadAllText(filepath));
             var archiveFilepath = Path.Combine(arguments.ArchiveDir!, $"{messageId}_" + Path.GetFileName(filepath));
             Log($"move {filepath} to {archiveFilepath}");
             File.Move(filepath, archiveFilepath);
@@ -63,11 +63,12 @@ try
     else
     {
         Log($"outputDir={arguments.OutputDir!}");
-        QueueReader.Get(queueManager, arguments.QueueName!, (messageId, contents) =>
+        var browse = arguments.Command == "browse";
+        QueueReader.Get(queueManager, arguments.QueueName!, browse, (messageId, contents) =>
         {
             var messagePath = Path.Combine(arguments.OutputDir!, $"{messageId}.txt");
             Log($"write messageId {messageId} to {messagePath}");
-            File.WriteAllBytes(messagePath, contents);
+            File.WriteAllText(messagePath, contents);
         });
     }
 

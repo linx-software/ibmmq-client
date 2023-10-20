@@ -36,7 +36,7 @@
         public bool IsNotComplete(out string[] errors)
         {
             var e = new List<string>();
-            if (Command == null) { e.Add("Command upload|download is required"); };
+            if (Command == null) { e.Add("Command upload|download|browse is required"); };
             if (Channel == null) { e.Add("-c channel is required"); };
             if (QueueManager == null) { e.Add("- queueManager is required"); };
             if (QueueName == null) { e.Add("-n queueName is required"); };
@@ -46,7 +46,7 @@
                 if (InputDir == null) { e.Add("-i inputDir is required"); };
                 if (ArchiveDir == null) { e.Add("-i archiveDir is required"); };
             }
-            if (Command == "download")
+            if (Command == "download" || Command == "browse")
             {
                 if (OutputDir == null) { e.Add("-o outputDir is required"); };
             }
@@ -57,10 +57,10 @@
         {
             return new string[]
             {
-                @"Usage: IBMMQClient upload|download -h host -p port -c channel -m queueManager -n queueName 
+                @"Usage: IBMMQClient upload|download|browse -h host -p port -c channel -m queueManager -n queueName 
 -i inputDir -o outputDir -a archiveDir -l logDir 
 -u userId -w password -r cipherSpec -s certStore",
-                "upload|download: Required first argument. Any one of the two.",
+                "upload|download|browse: Required first argument. Any one of the three.",
                 "-h host: Like -h 127.0.0.1. Default is localhost.",
                 "-p port: Like -p 1234. Default is 1414.",
                 "-c channel: Like -c DEV.APP.SVRCONN",

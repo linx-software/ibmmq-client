@@ -4,10 +4,10 @@ This is a console app to read and write text content to IBM MQ.
 We require IBM MQ connectivity at a customer. At the time of writing, Linx 6 does not have an IBMMQ plugin. This project provides a way to use Linx 6 to access IBM MQ by using the CommandLine function.
 
 # Specification #
-The app uploads and downloads text content to and from an IBM MQ queue.
+The app uploads and downloads text content to and from an IBM MQ queue. Browse acts like download but does not take the item off the queue.
 
-Usage: IBMMQClient upload|download -h host -p port -c channel -m queueManager -n queueName -i inputDir -o outputDir -a archiveDir -l logDir -u userId -w password -r cipherSpec -s certStore
-- upload|download: Required first argument. Any one of the two.
+Usage: IBMMQClient upload|download|browse -h host -p port -c channel -m queueManager -n queueName -i inputDir -o outputDir -a archiveDir -l logDir -u userId -w password -r cipherSpec -s certStore
+- upload|download|browse: Required first argument. Any one of the three.
 - -h host: Like -h 127.0.0.1. Default is localhost.
 - -p port: Like -p 1234. Default is 1414.
 - -c channel: Like -c DEV.APP.SVRCONN
@@ -36,6 +36,14 @@ Download reads each message from the queue, writes the contents to a file named 
 example:
 ````
 IBMMQClient.exe download -h 127.0.0.1 -p 1414 -c DEV.APP.SVRCONN -m QM1 -n DEV.QUEUE.1 -o c:\temp\mq\output -l c:\temp\mq\log -u app -w passw0rd
+````
+
+## Browse ##
+Browse reads each message from the queue and writes the contents to a file named [messageid].txt in the output directory.
+
+example:
+````
+IBMMQClient.exe browse -h 127.0.0.1 -p 1414 -c DEV.APP.SVRCONN -m QM1 -n DEV.QUEUE.1 -o c:\temp\mq\output -l c:\temp\mq\log -u app -w passw0rd
 ````
 
 ## Log ##
