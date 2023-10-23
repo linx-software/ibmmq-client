@@ -4,6 +4,10 @@ namespace IBMMQClient
 {
     internal class QueueReader
     {
+        static QueueReader()
+        {
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+        }
         public static void Get(MQQueueManager queueManager, string queueName, bool browse, Action<string, string> contentHandler)
         {
             int openOptions = MQC.MQOO_INPUT_AS_Q_DEF | MQC.MQOO_BROWSE;
