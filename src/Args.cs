@@ -32,7 +32,7 @@
         public string? ArchiveDir { get { return GetArg("-a"); } }
         public string? LogDir { get { return GetArg("-l"); } }
         public string? CipherSpec { get { return GetArg("-r"); } }
-        public string? CertStore { get { return GetArg("-c"); } }
+        public string? CertStore { get { return GetArg("-s"); } }
         public bool IsNotComplete(out string[] errors)
         {
             var e = new List<string>();
