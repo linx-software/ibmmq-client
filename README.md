@@ -62,3 +62,5 @@ docker run --env LICENSE=accept --env MQ_QMGR_NAME=QM1 --publish 1414:1414 --pub
 ````
 
 I couldn't get the ibmmq console running in the container at https://localhost:9443/ibmmq/console to work, but the client and this app does work with the parameters shown in the examples above.
+
+The app.config contains three settings that controls tracing the MQClient. This app uses the settings to set environment variables to configure tracing.  See https://www.ibm.com/docs/en/ibm-mq/9.3?topic=applications-tracing-mq-net-using-environment-variables. You can also use the mqclient.ini file for more control over the inner workings of the MQClient. See https://www.ibm.com/docs/en/ibm-mq/9.3?topic=applications-tracing-mq-net-mqclientini.

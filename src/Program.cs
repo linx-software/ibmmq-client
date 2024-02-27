@@ -2,8 +2,9 @@
 using IBM.WMQ;
 using IBMMQClient;
 using System.Collections;
+using System.Configuration;
 
-if(args.Length == 0)
+if (args.Length == 0)
 {
     throw new Exception(String.Join("\r\n", Args.GetHelp()));
 }
@@ -13,6 +14,13 @@ if(arguments.IsNotComplete(out var errors))
 {
     throw new Exception(String.Join("\r\n", errors));
 }
+
+var trace = ConfigurationManager.AppSettings.Get("MQDOTNET_TRACE_ON");
+if (trace != null) System.Environment.SetEnvironmentVariable("MQDOTNET_TRACE_ON", trace);
+var tracePath = ConfigurationManager.AppSettings.Get("MQTRACEPATH");
+if (tracePath != null) System.Environment.SetEnvironmentVariable("MQTRACEPATH", tracePath);
+var errorPath = ConfigurationManager.AppSettings.Get("MQERRORPATH");
+if (errorPath != null) System.Environment.SetEnvironmentVariable("MQERRORPATH", errorPath);
 
 string logFilepath = Path.Combine(arguments.LogDir!, DateTime.UtcNow.ToString("yyyyMMdd") + ".log");
 void Log(string message)
