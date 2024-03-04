@@ -51,7 +51,8 @@ try
     if (arguments.Password != null) { connectionProperties.Add(MQC.PASSWORD_PROPERTY, arguments.Password); };
     if (arguments.CertStore != null) { connectionProperties.Add(MQC.SSL_CERT_STORE_PROPERTY, arguments.CertStore); };
     if (arguments.CipherSpec != null) { connectionProperties.Add(MQC.SSL_CIPHER_SPEC_PROPERTY, arguments.CipherSpec); };
-    
+    if (arguments.SslPeerName != null) { connectionProperties.Add(MQC.SSL_PEER_NAME_PROPERTY, arguments.SslPeerName); };
+
     MQQueueManager queueManager = new(arguments.QueueManager, connectionProperties);
 
     if (arguments.Command == "upload")

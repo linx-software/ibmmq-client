@@ -21,6 +21,7 @@ Usage: IBMMQClient upload|download|browse -h host -p port -c channel -m queueMan
 - -w password: Like -w verylongpassword
 - -r cipherSpec: Like -r TLS_RSA_WITH_AES_256_CBC_SHA256
 - -s certStore: Like -s *USER. Where to find the cert in the Windows certificate store. Can be *SYSTEM or *USER
+- -e sslPeerName: Like -e CN=peername
 
 ## Upload ##
 Upload reads files from the input directory, puts a message containing the contents of the file on the queue, and moves the file to the archive directory prepending [messageid]_ to the filename.

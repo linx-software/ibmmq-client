@@ -33,6 +33,7 @@
         public string? LogDir { get { return GetArg("-l"); } }
         public string? CipherSpec { get { return GetArg("-r"); } }
         public string? CertStore { get { return GetArg("-s"); } }
+        public string? SslPeerName { get { return GetArg("-e"); } }
         public bool IsNotComplete(out string[] errors)
         {
             var e = new List<string>();
@@ -73,7 +74,8 @@
                 "-u userID: Like -u appuser",
                 "-w password: Like -w verylongpassword",
                 "-r cipherSpec: Like -r TLS_RSA_WITH_AES_256_CBC_SHA256",
-                "-s certStore: Like -s *USER. Where to find the cert in the Windows certificate store. Can be *SYSTEM or *USER"
+                "-s certStore: Like -s *USER. Where to find the cert in the Windows certificate store. Can be *SYSTEM or *USER",
+                "-e sslPeerName: Like -e CN=peername",
             };
         }
     }
