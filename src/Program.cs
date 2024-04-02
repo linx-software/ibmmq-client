@@ -3,6 +3,7 @@ using IBM.WMQ;
 using IBMMQClient;
 using System.Collections;
 using System.Configuration;
+using System.Text;
 
 if (args.Length == 0)
 {
@@ -28,6 +29,16 @@ void Log(string message)
     Console.WriteLine(message);
     var contents = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff") + " " + message + "\r\n";
     File.AppendAllText(logFilepath, contents);
+}
+
+string RemoveInvalidFileNameChars(string unsafeFileName)
+{
+    var fileName = unsafeFileName.Trim();
+    foreach (var c in Path.GetInvalidFileNameChars())
+    {
+        fileName = fileName.Replace(c, '-');
+    }
+    return fileName;
 }
 
 try
@@ -64,7 +75,7 @@ try
         {
             Log($"put {filepath} on queue");
             var messageId = q.Put(File.ReadAllText(filepath));
-            var archiveFilepath = Path.Combine(arguments.ArchiveDir!, $"{messageId}_" + Path.GetFileName(filepath));
+            var archiveFilepath = Path.Combine(arguments.ArchiveDir!, $"{RemoveInvalidFileNameChars(messageId)}_" + Path.GetFileName(filepath));
             Log($"move {filepath} to {archiveFilepath}");
             File.Move(filepath, archiveFilepath);
         }
@@ -75,7 +86,7 @@ try
         var browse = arguments.Command == "browse";
         QueueReader.Get(queueManager, arguments.QueueName!, browse, (messageId, contents) =>
         {
-            var messagePath = Path.Combine(arguments.OutputDir!, $"{messageId}.txt");
+            var messagePath = Path.Combine(arguments.OutputDir!, $"{RemoveInvalidFileNameChars(messageId)}.txt");
             Log($"write messageId {messageId} to {messagePath}");
             File.WriteAllText(messagePath, contents);
         });
