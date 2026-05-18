@@ -86,7 +86,12 @@ try
         var browse = arguments.Command == "browse";
         QueueReader.Get(queueManager, arguments.QueueName!, browse, (messageId, contents) =>
         {
-            var messagePath = Path.Combine(arguments.OutputDir!, $"{RemoveInvalidFileNameChars(messageId)}.txt");
+            var safeMessageId = RemoveInvalidFileNameChars(messageId);
+            var messagePath = Path.Combine(arguments.OutputDir!, $"{safeMessageId}.txt");
+            for (int i = 1; File.Exists(messagePath); i++)
+            {
+                messagePath = Path.Combine(arguments.OutputDir!, $"{safeMessageId}[{i}].txt");
+            }
             Log($"write messageId {messageId} to {messagePath}");
             File.WriteAllText(messagePath, contents);
         });

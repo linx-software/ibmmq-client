@@ -1,12 +1,17 @@
-# Background #
+# README
+
+## Background
+
 This is a console app to read and write text content to IBM MQ.
 
 We require IBM MQ connectivity at a customer. At the time of writing, Linx 6 does not have an IBMMQ plugin. This project provides a way to use Linx 6 to access IBM MQ by using the CommandLine function.
 
-# Specification #
+## Specification
+
 The app uploads and downloads text content to and from an IBM MQ queue. Browse acts like download but does not take the item off the queue.
 
 Usage: IBMMQClient upload|download|browse -h host -p port -c channel -m queueManager -n queueName -i inputDir -o outputDir -a archiveDir -l logDir -u userId -w password -r cipherSpec -s certStore
+
 - upload|download|browse: Required first argument. Any one of the three.
 - -h host: Like -h 127.0.0.1. Default is localhost.
 - -p port: Like -p 1234. Default is 1414.
@@ -23,34 +28,42 @@ Usage: IBMMQClient upload|download|browse -h host -p port -c channel -m queueMan
 - -s certStore: Like -s *USER. Where to find the cert in the Windows certificate store. Can be *SYSTEM or *USER
 - -e sslPeerName: Like -e CN=peername
 
-## Upload ##
+### Upload
+
 Upload reads files from the input directory, puts a message containing the contents of the file on the queue, and moves the file to the archive directory prepending [messageid]_ to the filename.
 
 examples:
-````
+
+````text
 IBMMQClient.exe upload -h 127.0.0.1 -p 1414 -c DEV.APP.SVRCONN -m QM1 -n DEV.QUEUE.1 -i c:\temp\mq\input -a c:\temp\mq\archive -l c:\temp\mq\log -u app -w passw0rd
 ````
 
-## Download ##
-Download reads each message from the queue, writes the contents to a file named [messageid].txt in the output directory, and then removes the file from the queue.
+### Download
+
+Download reads each message from the queue, writes the contents to a file named [messageid].txt in the output directory, and then removes the file from the queue. If [messageid].txt exists, an incremental number starting at 1 is appended to the filename in square brackets.
 
 example:
-````
+
+````text
 IBMMQClient.exe download -h 127.0.0.1 -p 1414 -c DEV.APP.SVRCONN -m QM1 -n DEV.QUEUE.1 -o c:\temp\mq\output -l c:\temp\mq\log -u app -w passw0rd
 ````
 
-## Browse ##
-Browse reads each message from the queue and writes the contents to a file named [messageid].txt in the output directory.
+### Browse
+
+Browse reads each message from the queue and writes the contents to a file named [messageid].txt in the output directory. If [messageid].txt exists, an incremental number starting at 1 is appended to the filename in square brackets.
 
 example:
-````
+
+````text
 IBMMQClient.exe browse -h 127.0.0.1 -p 1414 -c DEV.APP.SVRCONN -m QM1 -n DEV.QUEUE.1 -o c:\temp\mq\output -l c:\temp\mq\log -u app -w passw0rd
 ````
 
-## Log ##
+### Log
+
 Logs are written to a file called [date].log in the log directory.
 
-# Notes #
+## Notes
+
 Documentation to get started
 https://www.ibm.com/docs/en/ibm-mq/9.3?topic=applications-developing-net
 https://www.ibm.com/docs/en/ibm-mq/9.3?topic=reference-mq-net-classes-interfaces
@@ -58,7 +71,8 @@ https://www.ibm.com/docs/en/ibm-mq/9.3?topic=reference-mq-net-classes-interfaces
 Use TRANSPORT_MQSERIES_MANAGED mode. For other modes the MQSeries client install is required.
 
 I tested this by running IBM MQ in a container: https://developer.ibm.com/tutorials/mq-connect-app-queue-manager-containers/
-````
+
+````text
 docker run --env LICENSE=accept --env MQ_QMGR_NAME=QM1 --publish 1414:1414 --publish 9443:9443 --detach --env MQ_APP_PASSWORD=passw0rd --name QM1 icr.io/ibm-messaging/mq:latest
 ````
 
