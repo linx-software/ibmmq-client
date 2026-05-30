@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(dotnet build \"src\\\\IBMMQClient.csproj\" -c Release 2>&1)",
+      "PowerShell(dotnet list \"src\\\\IBMMQClient.csproj\" package --outdated 2>&1)"
+    ]
+  }
+}
